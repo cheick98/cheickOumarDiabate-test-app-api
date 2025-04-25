@@ -30,6 +30,14 @@ model Level {
   students Student[] // ➕ Un Level peut avoir plusieurs Students
 }
 
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  name     String
+  password String
+  role     String
+}
+
 model Student {
   id            Int      @id @default(autoincrement())
   nom           String
