@@ -1,0 +1,56 @@
+version: '3.1'
+
+services:
+  mysql:
+    container_name: backend-sup-db
+    image: mysql:8.0.37-debian
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=71805703
+      - MYSQL_DATABASE=backend-sup
+      # - MYSQL_USER=tznation
+      # - MYSQL_PASSWORD=password
+    ports:
+      - 3306:3306
+    volumes:
+      - db_data:/var/lib/mysql
+
+  phpmyadmin:
+    container_name: backend-sup-phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - mysql
+    restart: always
+    environment:
+      - PMA_HOST=mysql
+      - MYSQL_ROOT_PASSWORD=71805703
+    ports:
+      - 8000:80
+
+  minio:
+    container_name: backend-sup-minio
+    image: minio/minio
+    restart: always
+    ports:
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - minio_data:/data/minio
+    env_file:
+      - ./.env
+    command: server /data/minio
+
+  mailhog:
+    container_name: backend-sup-mailhog
+    image: mailhog/mailhog:v1.0.1
+    restart: always
+    ports:
+      - 1025:1025   # SMTP server
+      - 8025:8025   # Web interface
+    environment:
+      - MH_UI_PORT=8025
+      - MH_SMTP_PORT=1025
+
+volumes:
+  db_data:
+  minio_data:

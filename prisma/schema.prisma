@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Program {
+  id          Int     @id @default(autoincrement())
+  name        String
+  sigle       String
+  description String?
+
+  levels   Level[] // ➕ Un Program peut avoir plusieurs Levels
+  students Student[] // ➕ Un Program peut avoir plusieurs Students
+}
+
+model Level {
+  id    Int    @id @default(autoincrement())
+  name  String
+  sigle String
+  index Int
+
+  programId Int // ➕ Foreign key vers Program
+  program   Program @relation(fields: [programId], references: [id])
+
+  students Student[] // ➕ Un Level peut avoir plusieurs Students
+}
+
+model Student {
+  id            Int      @id @default(autoincrement())
+  nom           String
+  prenom        String
+  email         String   @unique
+  sexe          String
+  dateNaissance DateTime
+  phone         String?
+
+  programId Int
+  levelId   Int
+
+  program Program @relation(fields: [programId], references: [id])
+  level   Level   @relation(fields: [levelId], references: [id])
+}
